@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Manager (SQLite)</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="/css/styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+<div class="container">
+    <h1>Task Manager</h1>
+    <form th:action="@{/tasks}" method="post" class="add-form" th:object="${newTask}">
+        <input type="text" th:field="*{name}" placeholder="Enter task name" required/>
+        <button type="submit">Add Task</button>
+        <div class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</div>
+    </form>
+
+    <div class="list">
+        <h2>Tasks</h2>
+        <div th:if="${#lists.isEmpty(tasks)}">No tasks yet. Add one above.</div>
+        <table th:if="${!#lists.isEmpty(tasks)}">
+            <thead>
+            <tr><th style="width:70%">Name</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="t : ${tasks}">
+                <td>
+                    <form th:action="@{/tasks/{id}/update(id=${t.id})}" method="post" class="inline-form">
+                        <input type="text" name="name" th:value="${t.name}" required/>
+                        <button type="submit">Save</button>
+                    </form>
+                </td>
+                <td>
+                    <form th:action="@{/tasks/{id}/delete(id=${t.id})}" method="post" class="inline-form">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

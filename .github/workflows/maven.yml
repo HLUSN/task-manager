@@ -1,0 +1,49 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      # Runs tests (JUnit), fails the job if tests fail
+      - name: Build & test
+        run: mvn -B -ntp -U verify
+
+      # Optional: build the jar without re-running tests
+      - name: Package jar
+        if: success()
+        run: mvn -B -ntp -DskipTests package
+
+      # Save the jar as a CI artifact you can download
+      - name: Upload JAR artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: task-manager-jar
+          path: target/*.jar
+
+      # Always upload test reports for debugging if something fails
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: |
+            target/surefire-reports/**
+            target/failsafe-reports/**
