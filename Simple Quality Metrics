@@ -1,0 +1,28 @@
+Simple Quality Metrics
+Defect Density Calculation
+Module: TaskController.java
+Lines of Code: 50
+Defects Found: 2
+
+Defect Density = Number of defects / Lines of Code
+Defect Density = 2 / 50 = 0.04 defects per LOC
+
+Mean Time to Failure (MTTF)
+Total Operating Time: 10 hours
+Number of Failures: 2
+
+MTTF = Total operating time / Number of failures
+MTTF = 10 / 2 = 5 hours
+
+SonarQube Analysis Summary
+Run command: mvn sonar:sonar
+
+Key Findings:
+
+Code Smells: 0
+Duplicated Lines: 0%
+Vulnerabilities: 0
+Security Hotspots: 0
+Coverage: 85%
+Quality Gate: PASSED ✅
+

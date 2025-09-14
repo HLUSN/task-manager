@@ -1,0 +1,52 @@
+Simple Bug Reports
+Bug #1: Empty Task Name Validation Error Not Displayed
+JIRA ID: QTP-001
+Severity: Major
+Priority: High
+
+Steps to Reproduce:
+Go to http://localhost:8080/tasks
+Leave task name field empty
+Click "Add Task" button
+Expected Result:
+Error message "Task name is required" should be displayed
+
+Actual Result:
+No error message shown, page just refreshes
+
+Root Cause:
+Template missing error display logic
+
+Fix Applied:
+html
+<!-- Add to template -->
+<div th:if="${#fields.hasErrors('newTask.name')}" class="alert alert-danger">
+    <span th:errors="*{newTask.name}">Name Error</span>
+</div>
+Bug #2: Selenium Test Timeout Issues
+JIRA ID: QTP-002
+Severity: Minor
+Priority: Medium
+
+Steps to Reproduce:
+Run mvn test
+TaskManagerSeleniumTest sometimes fails
+Expected Result:
+Test should pass consistently
+
+Actual Result:
+Intermittent failures due to timing
+
+Root Cause:
+Missing WebDriverWait in Selenium tests
+
+Fix Applied:
+java
+// Added explicit wait
+WebElement taskInput = wait.until(ExpectedConditions.visibilityOfElementLocated(
+    By.xpath("//input[@placeholder='Enter task name']")));
+Bug Metrics:
+Total Bugs: 2
+Major: 1
+Minor: 1
+Resolution Rate: 100%

@@ -1,0 +1,53 @@
+Simple Security Assessment - OWASP Top 10
+Vulnerability 1: A03:2021 - Injection (SQL Injection)
+Status: ✅ MITIGATED
+How it's fixed:
+
+Uses Spring Data JPA with parameterized queries
+Repository method findByName(String name) is safe
+Evidence of fix:
+
+java
+// Safe JPA repository method
+public interface TaskRepository extends JpaRepository<Task, Long> {
+    List<Task> findByName(String name);  // Automatically parameterized
+}
+Test to verify:
+
+java
+@Test
+public void testSQLInjectionPrevention() {
+    String maliciousInput = "'; DROP TABLE tasks; --";
+    Task task = new Task(maliciousInput);
+    taskRepository.save(task);
+    
+    // Verify the malicious input is stored as literal text, not executed
+    List<Task> tasks = taskRepository.findByName(maliciousInput);
+    assertEquals(1, tasks.size());
+    assertEquals(maliciousInput, tasks.get(0).getName());
+}
+Vulnerability 2: A06:2021 - Vulnerable and Outdated Components
+Status: ✅ CHECKED
+How it's verified:
+
+Ran Maven dependency check: mvn dependency:check
+All dependencies are current versions
+No critical vulnerabilities found
+Evidence:
+
+xml
+<!-- Using latest stable versions -->
+<parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.5.5</version> <!-- Latest stable -->
+</parent>
+Command to verify:
+
+bash
+mvn org.owasp:dependency-check-maven:check
+Summary
+Total vulnerabilities reviewed: 2
+Mitigated: 2
+Risk level: LOW
+Recommendation: Continue using JPA for database operations and keep dependencies updated

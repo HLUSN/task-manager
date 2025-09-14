@@ -6,9 +6,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -62,5 +61,14 @@ class TaskControllerTest {
 
         // Verify the task was deleted
         assertThat(repository.findAll()).hasSize(0);
+    }
+
+    @Test
+    void testAddTaskWithEmptyName() throws Exception {
+        mockMvc.perform(post("/tasks")
+                        .param("name", ""))
+                .andExpect(status().isOk()) // Should not redirect due to validation error
+                .andExpect(view().name("index"))
+                .andExpect(model().attributeHasFieldErrors("newTask", "name"));
     }
 }
