@@ -23,7 +23,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@CucumberContextConfiguration // Add this annotation
+@CucumberContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SimpleStepDefinitions {
 
@@ -41,8 +41,8 @@ public class SimpleStepDefinitions {
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--window-size=1920,1080");
-        driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        this.driver = new ChromeDriver(options); // Fix: Use this.driver instead of hiding field
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
     }
 
     @After
@@ -72,18 +72,15 @@ public class SimpleStepDefinitions {
                 By.xpath("//button[contains(text(), '" + buttonText + "')]")));
         button.click();
 
-        // Wait for operations to complete
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        // Fix: Remove Thread.sleep() - use WebDriverWait instead
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                By.xpath("//div[@class='loading']")));
     }
 
     @Then("I should see {string} in the task list")
     public void i_should_see_in_the_task_list(String taskName) {
-        boolean taskFound = wait.until(driver -> {
-            List<WebElement> taskElements = driver.findElements(
+        boolean taskFound = wait.until(localDriver -> {
+            List<WebElement> taskElements = localDriver.findElements(
                     By.xpath("//table//tr//input[@type='text']"));
             for (WebElement element : taskElements) {
                 String value = element.getAttribute("value");
@@ -98,8 +95,8 @@ public class SimpleStepDefinitions {
 
     @Then("I should not see {string} in the task list")
     public void i_should_not_see_in_the_task_list(String taskName) {
-        boolean taskNotFound = wait.until(driver -> {
-            List<WebElement> taskElements = driver.findElements(
+        boolean taskNotFound = wait.until(localDriver -> {
+            List<WebElement> taskElements = localDriver.findElements(
                     By.xpath("//table//tr//input[@type='text']"));
             for (WebElement element : taskElements) {
                 String value = element.getAttribute("value");
@@ -116,15 +113,13 @@ public class SimpleStepDefinitions {
     public void there_is_a_task_named(String taskName) {
         i_enter_into_the_task_field(taskName);
         i_click_the_button("Add Task");
-
-        // Verify the task was added
         i_should_see_in_the_task_list(taskName);
     }
 
     @When("I delete the task {string}")
     public void i_delete_the_task(String taskName) {
-        WebElement deleteButton = wait.until(driver -> {
-            List<WebElement> rows = driver.findElements(By.xpath("//table//tr"));
+        WebElement deleteButton = wait.until(localDriver -> {
+            List<WebElement> rows = localDriver.findElements(By.xpath("//table//tr"));
             for (WebElement row : rows) {
                 List<WebElement> inputs = row.findElements(By.xpath(".//input[@type='text']"));
                 for (WebElement input : inputs) {
@@ -139,18 +134,15 @@ public class SimpleStepDefinitions {
         assertNotNull(deleteButton, "Delete button should be found for task: " + taskName);
         deleteButton.click();
 
-        // Wait for deletion to complete
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        // Fix: Remove Thread.sleep() - use WebDriverWait instead
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                By.xpath("//div[@class='loading']")));
     }
 
     @When("I update the task {string} to {string}")
     public void i_update_the_task_to(String oldName, String newName) {
-        WebElement taskInput = wait.until(driver -> {
-            List<WebElement> inputs = driver.findElements(By.xpath("//table//tr//input[@type='text']"));
+        WebElement taskInput = wait.until(localDriver -> {
+            List<WebElement> inputs = localDriver.findElements(By.xpath("//table//tr//input[@type='text']"));
             for (WebElement input : inputs) {
                 String value = input.getAttribute("value");
                 if (oldName.equals(value)) {
@@ -161,20 +153,15 @@ public class SimpleStepDefinitions {
         });
         assertNotNull(taskInput, "Task input should be found: " + oldName);
 
-        // Update the task name
         taskInput.clear();
         taskInput.sendKeys(newName);
 
-        // Find and click the update button
         WebElement updateForm = taskInput.findElement(By.xpath("./ancestor::tr//form[contains(@action, 'update')]"));
         WebElement updateButton = updateForm.findElement(By.tagName("button"));
         updateButton.click();
 
-        // Wait for update to complete
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        // Fix: Remove Thread.sleep() - use WebDriverWait instead
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                By.xpath("//div[@class='loading']")));
     }
 }

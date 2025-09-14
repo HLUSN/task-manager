@@ -36,8 +36,8 @@ public class TaskManagerSeleniumTest {
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--window-size=1920,1080");
-        driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        this.driver = new ChromeDriver(options); // Fix: Use this.driver instead of hiding field
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
     }
 
     @AfterEach
@@ -68,8 +68,8 @@ public class TaskManagerSeleniumTest {
 
         // Wait for the task to appear in the table
         // The task will be in an input field within a table row
-        boolean taskFound = wait.until(driver -> {
-            List<WebElement> inputFields = driver.findElements(
+        boolean taskFound = wait.until(webDriver -> { // Fix: Use different parameter name to avoid hiding field
+            List<WebElement> inputFields = webDriver.findElements(
                     By.xpath("//table//input[@type='text']"));
             for (WebElement input : inputFields) {
                 String value = input.getAttribute("value");
@@ -82,6 +82,4 @@ public class TaskManagerSeleniumTest {
 
         assertTrue(taskFound, "New task should be displayed in the table");
     }
-
-
 }

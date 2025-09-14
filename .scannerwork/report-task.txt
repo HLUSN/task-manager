@@ -2,5 +2,5 @@ projectKey=task-manager-sqlite
 serverUrl=http://localhost:9000
 serverVersion=25.8.0.112029
 dashboardUrl=http://localhost:9000/dashboard?id=task-manager-sqlite
-ceTaskId=f3b0385b-f88d-468e-928f-e77a6fde53ee
-ceTaskUrl=http://localhost:9000/api/ce/task?id=f3b0385b-f88d-468e-928f-e77a6fde53ee
+ceTaskId=23086fe2-3f8f-40d8-a80e-20a792e8834c
+ceTaskUrl=http://localhost:9000/api/ce/task?id=23086fe2-3f8f-40d8-a80e-20a792e8834c
